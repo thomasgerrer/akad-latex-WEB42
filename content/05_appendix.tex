@@ -1,0 +1,249 @@
+\section{Anhang}
+\label{section:appendix}
+\subsection{Racket/SQL Programmcode für das Carsharing DBMS}
+\label{subsec:SQLcode}
+\begin{lstlisting}[language=racketSQL]
+#lang racket
+
+;; ------------------------------------------------------------ ;;
+;; "Basic Example: Connecting to SQLite" ;;
+;; ------------------------------------------------------------ ;;
+(require db)
+
+;; Connect to (or create) a database file named "carsharing.db" ;;
+(define conn
+	(sqlite3-connect #:database "carsharing.db"
+					 #:mode 'create))
+;; Enable foreign key enforcement ;;
+(query-exec conn "PRAGMA foreign_keys = ON;")
+
+;; ------------------------------------------------------------ ;;
+;; Create database tables ;; 
+;; ------------------------------------------------------------ ;;
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Adresse (
+		AdressID Integer PRIMARY KEY AUTOINCREMENT,
+		Strasse TEXT NOT NULL,
+		Nr Integer NOT NULL,
+		PLZ Integer NOT NULL,
+		Ort TEXT NOT NULL,
+		UNIQUE(Strasse, Nr, PLZ)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Fahrzeugklasse (
+		KlasseID Integer PRIMARY KEY AUTOINCREMENT,
+		Typ TEXT NOT NULL,
+		UNIQUE(Typ)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Fahrzeug (
+		Kennzeichen TEXT PRIMARY KEY,
+		Modell TEXT NOT NULL,
+		Tankstand REAL NOT NULL,
+		Kraftstoff TEXT NOT NULL,
+		KlasseID TEXT NOT NULL,
+		AdressID TEXT NOT NULL,
+		FOREIGN KEY(KlasseID) REFERENCES Fahrzeugklasse(KlasseID),
+		FOREIGN KEY(AdressID) REFERENCES Adresse(AdressID)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Tarif (
+		TarifID Integer PRIMARY KEY AUTOINCREMENT,
+		Grundpreis TEXT NOT NULL,
+		KostenProKM REAL NOT NULL,
+		KostenProStd REAL NOT NULL,
+		UNIQUE(Grundpreis, KostenProKM, KostenProStd)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Kunde (
+		KundID Integer PRIMARY KEY AUTOINCREMENT,
+		Vorname TEXT NOT NULL,
+		Nachname TEXT NOT NULL,
+		IBAN TEXT NOT NULL,
+		Geburtsdatum TEXT NOT NULL,
+		AdressID Integer,
+		FOREIGN KEY(AdressID) REFERENCES Adresse(AdressID)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Vertrag (
+		VertragID Integer PRIMARY KEY AUTOINCREMENT,
+		KundID Integer,
+		TarifID Integer,
+		FOREIGN KEY(KundID) REFERENCES Kunde(KundID),
+		FOREIGN KEY(TarifID) REFERENCES Tarif(TarifID)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Buchung (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		startzeit TEXT NOT NULL,
+		endzeit TEXT NOT NULL,
+		distanz REAL,
+		FahrzeugKennzeichen TEXT NOT NULL,
+		KundID INTEGER NOT NULL,
+		FOREIGN KEY(FahrzeugKennzeichen) REFERENCES Fahrzeug(Kennzeichen),
+		FOREIGN KEY(KundID) REFERENCES Kunde(KundID),
+		UNIQUE(startzeit, FahrzeugKennzeichen, KundID)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Rechnungsposition (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		Betrag REAL NOT NULL,
+		BuchungID INTEGER NOT NULL,
+		FOREIGN KEY(BuchungID) REFERENCES Buchung(id),
+		UNIQUE(BuchungID)
+		);")
+
+(query-exec conn
+	"CREATE TABLE IF NOT EXISTS Rechnung (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		Datum TEXT NOT NULL,
+		Gesamtbetrag REAL NOT NULL,
+		RPosID INTEGER NOT NULL,
+		KundID INTEGER NOT NULL,
+		FOREIGN KEY(RPosID) REFERENCES Rechnungsposition(id),
+		FOREIGN KEY(KundID) REFERENCES Kunde(KundID),
+		UNIQUE(Datum, KundID)
+		);")
+
+;; ------------------------------------------------------------ ;;
+;; Fill tables with data sets ;;
+;; ------------------------------------------------------------ ;;
+(query-exec conn
+	"INSERT OR IGNORE INTO Adresse (Strasse, Nr, PLZ, Ort)
+	VALUES (?,?,?,?)"
+	"Eisenhutstr." 50 72072 "Tuebingen")
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Adresse (Strasse, Nr, PLZ, Ort)
+	VALUES (?,?,?,?)"
+	"Eisenhutstr." 60 72072 "Tuebingen")
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Fahrzeugklasse (Typ)
+	VALUES (?)"
+	"S")
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Fahrzeug (Kennzeichen, Modell, Tankstand, Kraftstoff, KlasseID, AdressID)
+	VALUES (?, ?, ?, ?, ?, ?)"
+	"RO-CJ-262" "Fiat Punto" 0.57 "Benzin" 1 2)
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Tarif (Grundpreis, KostenProKM, KostenProStd)
+	VALUES (?, ?, ?)"
+	10.00 0.43 1.20)
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Kunde (Vorname, Nachname, IBAN, Geburtsdatum, AdressID)
+	VALUES (?, ?, ?, ?, ?)"
+	"Thomas" "Gerrer" "DE89370400440532013000" "13.04.1999" 1)
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Vertrag (KundID, TarifID)
+	VALUES (?, ?)"
+	1 1)
+
+(query-exec conn
+	"INSERT OR IGNORE INTO Buchung (startzeit, endzeit, distanz, FahrzeugKennzeichen, KundID)
+	VALUES (?, ?, ?, ?, ?)"
+	"2025-05-29 14:16:00" "2025-11-30 18:16:00" 15.30 "RO-CJ-262" 1)
+
+;; ------------------------------------------------------------ ;;
+;; Query 'Buchungseintraege' and 'Fahrzeugeintraege' and print to screen ;;
+;; ------------------------------------------------------------ ;;
+(define Buchungseintraege
+(query-rows conn
+	"SELECT id, distanz, FahrzeugKennzeichen, KundID FROM Buchung"))
+(for ([r Buchungseintraege])
+	(printf "~a\n" r))
+
+(define Fahrzeugeintraege
+(query-rows conn
+	"SELECT Kennzeichen, Modell FROM Fahrzeug"))
+(for ([r Fahrzeugeintraege])
+	(printf "~a\n" r))
+\end{lstlisting}
+
+\subsection{XML Darstellung der in Racket beispielhaft definierten Datensätze}
+\label{subsec:XMLcode}
+\begin{lstlisting}[language=XML]
+<database file="code/carsharing.db">
+	<table name="Adresse">
+		<row>
+			<cell name="AdressID">1</cell>
+			<cell name="Strasse">Eisenhutstr.</cell>
+			<cell name="Nr">50</cell>
+			<cell name="PLZ">72072</cell>
+			<cell name="Ort">Tuebingen</cell>
+		</row>
+		<row>
+			<cell name="AdressID">2</cell>
+			<cell name="Strasse">Eisenhutstr.</cell>
+			<cell name="Nr">60</cell>
+			<cell name="PLZ">72072</cell>
+			<cell name="Ort">Tuebingen</cell>
+		</row>
+	</table>
+	<table name="Fahrzeugklasse">
+		<row>
+		<cell name="KlasseID">1</cell>
+		<cell name="Typ">S</cell>
+		</row>
+	</table>
+	<table name="Tarif">
+		<row>
+		<cell name="TarifID">1</cell>
+		<cell name="Grundpreis">10.0</cell>
+		<cell name="KostenProKM">0.43</cell>
+		<cell name="KostenProStd">1.2</cell>
+		</row>
+	</table>
+	<table name="Kunde">
+		<row>
+		<cell name="KundID">1</cell>
+		<cell name="Vorname">Thomas</cell>
+		<cell name="Nachname">Gerrer</cell>
+		<cell name="IBAN">DE89370400440532013000</cell>
+		<cell name="Geburtsdatum">13.04.1999</cell>
+		<cell name="AdressID">1</cell>
+		</row>
+	</table>
+	<table name="Vertrag">
+		<row>
+		<cell name="VertragID">1</cell>
+		<cell name="KundID">1</cell>
+		<cell name="TarifID">1</cell>
+		</row>
+	</table>
+	<table name="Fahrzeug">
+		<row>
+		<cell name="Kennzeichen">RO-CJ-262</cell>
+		<cell name="Modell">Fiat Punto</cell>
+		<cell name="Tankstand">0.57</cell>
+		<cell name="Kraftstoff">Benzin</cell>
+		<cell name="KlasseID">1</cell>
+		<cell name="AdressID">2</cell>
+		</row>
+	</table>
+	<table name="Buchung">
+		<row>
+		<cell name="id">1</cell>
+		<cell name="startzeit">2025-05-29 14:16:00</cell>
+		<cell name="endzeit">2025-11-30 18:16:00</cell>
+		<cell name="distanz">15.3</cell>
+		<cell name="FahrzeugKennzeichen">RO-CJ-262</cell>
+		<cell name="KundID">1</cell>
+		</row>
+	</table>
+	<table name="Rechnungsposition"/>
+	<table name="Rechnung"/>
+</database>
+\end{lstlisting}
+	

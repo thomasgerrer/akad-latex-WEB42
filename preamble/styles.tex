@@ -1,0 +1,43 @@
+\usepackage[
+  top=30mm,
+  bottom=30mm,
+  left=25mm,
+  right=20mm
+]{geometry}
+
+% serif font
+\usepackage{bera}
+\addtokomafont{disposition}{\rmfamily}
+
+% sans serif font
+% \usepackage[scaled]{helvet}
+% \renewcommand{\familydefault}{\rmdefault}
+
+% line spacing
+\usepackage{setspace}
+\onehalfspacing
+
+% paragraph indent
+\setlength{\parindent}{25pt}
+
+% header and footer
+\usepackage[
+  autooneside=false,
+  automark,
+]{scrlayer-scrpage}
+
+% clear default header and footer
+\clearpairofpagestyles
+
+% set header and footer content
+\ihead{\footnotesize{\textcolor{gray}{\paperHeadnote}}}
+\ofoot{\pagemark}
+
+\usepackage[hang]{footmisc}
+\setlength{\footnotemargin}{5mm}
+
+\usepackage{chngcntr}
+\counterwithout{figure}{section}
+
+% word wrap
+\sloppy

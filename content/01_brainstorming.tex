@@ -1,0 +1,84 @@
+\section{Modellierung eines Datenmodells für Datenbanksysteme}
+
+\subsection*{Ziel}
+Ein \textbf{Datenmodell} beschreibt die Struktur, Beziehungen und Regeln der Daten, 
+die in einem IT-System gespeichert und verarbeitet werden. 
+Das Ziel besteht darin, eine \textbf{konsistente, redundanzfreie und performante Abbildung der Realwelt} in Datenbankform zu schaffen.
+
+\subsection*{1. Phasen der Datenmodellierung}
+
+\subsubsection*{1.1 Konzeptionelles Datenmodell (Fachliches Modell)}
+\begin{itemize}
+	\item \textbf{Ziel:} Abbilden der realen Welt aus Sicht des Fachbereichs.
+	\item \textbf{Werkzeug:} Entity-Relationship-Diagramm (ERD) oder UML-Klassendiagramm.
+	\item \textbf{Elemente:}
+	\begin{itemize}
+		\item \textbf{Entitäten} (z.\,B. \textit{Kunde}, \textit{Produkt}, \textit{Bestellung})
+		\item \textbf{Attribute} (z.\,B. \textit{Kundenname}, \textit{Preis})
+		\item \textbf{Beziehungen} (z.\,B. \textit{Kunde gibt Bestellung auf})
+	\end{itemize}
+\end{itemize}
+\textbf{Ergebnis:} Ein fachliches, technologieunabhängiges ER-Diagramm.
+
+\subsubsection*{1.2 Logisches Datenmodell}
+\begin{itemize}
+	\item \textbf{Ziel:} Präzisierung des konzeptionellen Modells auf Datenbankebene.
+	\item \textbf{Werkzeug:} Logisches ER-Diagramm (z.\,B. Chen- oder Crow’s-Foot-Notation).
+	\item \textbf{Schritte:}
+	\begin{itemize}
+		\item Definition von Primär- und Fremdschlüsseln.
+		\item Festlegung der Beziehungstypen (1:1, 1:n, m:n).
+		\item Normalisierung (mindestens bis zur 3. Normalform, oft 3NF oder BCNF).
+	\end{itemize}
+\end{itemize}
+\textbf{Ergebnis:} Ein strukturierter, logischer Entwurf, der sich direkt in Tabellen übersetzen lässt.
+
+\subsubsection*{1.3 Physisches Datenmodell}
+\begin{itemize}
+	\item \textbf{Ziel:} Umsetzung in einem konkreten Datenbanksystem.
+	\item \textbf{Werkzeug:} SQL-DDL-Skripte (\texttt{CREATE TABLE ...}), Datenbank-Design-Tools.
+	\item \textbf{Schritte:}
+	\begin{itemize}
+		\item Definition von Datentypen (z.\,B. \texttt{VARCHAR(255)}, \texttt{INT}, \texttt{DATE})
+		\item Indizes, Constraints, Trigger
+		\item Performance-Überlegungen (Partitionierung, Denormalisierung, Materialized Views)
+		\item Physische Speicheroptionen (z.\,B. Tablespaces, Sharding)
+	\end{itemize}
+\end{itemize}
+\textbf{Ergebnis:} Ein lauffähiges Datenbankschema, bereit zur Implementierung.
+
+\subsection*{2. Vorgehensweise in der Praxis}
+\begin{enumerate}[label=\arabic*.]
+	\item \textbf{Anforderungsanalyse:} Erheben, welche Informationen das System speichern und verarbeiten muss.
+	\item \textbf{Erstellen des konzeptionellen Modells:} Entitäten, Attribute und Beziehungen skizzieren.
+	\item \textbf{Validierung mit Fachanwendern:} Prüfen, ob das Modell die Realität korrekt abbildet.
+	\item \textbf{Überführung ins logische Modell:} Schlüsselfelder, Kardinalitäten und Normalisierung definieren.
+	\item \textbf{Erstellung des physischen Modells:} Umsetzung für ein konkretes DBMS (z.\,B. PostgreSQL).
+	\item \textbf{Optimierung und Pflege:} Performance-Tuning, Versionierung, Änderungsmanagement.
+\end{enumerate}
+
+\subsection*{3. Tools zur Datenmodellierung}
+\begin{tabular}{@{}p{4cm}p{10cm}@{}}
+	\toprule
+	\textbf{Typ} & \textbf{Beispiele} \\ \midrule
+	Professionelle Werkzeuge & ER/Studio, SAP PowerDesigner, Oracle SQL Developer Data Modeler \\
+	Open Source / Kostenlos & dbdiagram.io, draw.io, Lucidchart, DBeaver, pgModeler \\
+	Codebasiert & Prisma (Node.js), SQLAlchemy (Python), Hibernate (Java ORM) \\
+	\bottomrule
+\end{tabular}
+
+\subsection*{4. Beispiel eines logischen Modells}
+Ein einfaches logisches Modell für einen Online-Shop:
+\begin{verbatim}
+	Kunde (KundenID PK, Name, E-Mail)
+	Bestellung (BestellID PK, Datum, KundenID FK)
+	Produkt (ProduktID PK, Bezeichnung, Preis)
+	Bestellposition (BestellID FK, ProduktID FK, Menge)
+\end{verbatim}
+
+\noindent Beziehungen:
+\begin{itemize}
+	\item Kunde — Bestellung: 1:n
+	\item Bestellung — Bestellposition: 1:n
+	\item Produkt — Bestellposition: 1:n
+\end{itemize}

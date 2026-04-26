@@ -1,0 +1,25 @@
+<carsharing>
+	<!-- Beispiel-Datensatz für Rechnung -->
+    <RechnungID id="R1B3C">
+        <Gesamtbetrag>123,34</Gesamtbetrag>
+        <Datum>Schmidt</Datum>
+        <KundID id="K100A">
+            <Vorname>Ralf</Vorname>
+            <Nachname>Ralf</Nachname>
+			<Geburtsdatum>Ralf</Geburtsdatum>
+			<IBAN>Ralf</IBAN>
+			<VertragID id="V2361C">
+				<...>
+			</VertragID>
+			<AdressID id="A2361C">
+				<...>
+			</AdressID>
+		</KundID>
+		<VertragID id="V2361C">
+			<...>
+		</VertragID>
+		<RPosID id="P2341G">
+			<...>
+		<RPosID>
+	</RechnungID>
+</carsharing>

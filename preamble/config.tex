@@ -1,0 +1,70 @@
+% linked toc
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=black,
+  filecolor=black,
+  linkcolor=black,
+  urlcolor=black
+}
+
+% biblatex
+\usepackage[
+  backend=biber,
+  style=authoryear,
+  %autocite=footnote,
+  %maxnames=4,
+  %ibidpage=true,
+]{biblatex}
+\addbibresource{literature.bib}
+
+% configure colors
+\usepackage{xcolor}
+
+\usepackage{xpatch}
+\xpatchbibdriver{online}
+{\printtext[parens]{\usebibmacro{data}}}
+{\iffieldundef{year}{}{\printtext[parens]{\usebibmacro{data}}}}{}{}
+
+\usepackage{xcolor}
+
+% listings package with language configs
+\input{preamble/config_listings.tex}
+
+% acronym
+\usepackage[printonlyused]{acronym}
+
+% saves current page roman/arabic number
+\usepackage{etoolbox}
+\newcounter{savedpage}
+
+\usepackage{enumitem}
+\usepackage{amsmath}
+
+%Tabellen
+\usepackage{booktabs}
+%Tabelle
+\usepackage{multirow,makecell}
+\usepackage{ltablex}
+\usepackage{booktabs}
+\newcolumntype{L}[1]{>{\RaggedRight}p{#1}} 
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} 
+
+\usepackage{array}
+
+% configure graphicx
+\usepackage{graphicx}
+\graphicspath{{./assets/images}}
+
+% Configure Tables
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+\usepackage{lscape}
+
+
+% configure captions
+%\usepackage{caption}
+%\captionsetup{width=0.8\textwidth}
+
+% configure dates
+\usepackage[useregional=numeric]{datetime2}

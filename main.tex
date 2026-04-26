@@ -1,0 +1,74 @@
+\documentclass[
+	12pt,
+	a4paper,
+	oneside,
+	pagesize=auto,	
+  version=last, % Koma Script version
+	toc=listof, % add tables and figures to toc
+  bibliography=totoc % add bibliography to toc
+	]{scrartcl}
+
+% language
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{csquotes}
+\usepackage[ngerman]{babel}
+
+\input{preamble/styles.tex}
+\input{preamble/config.tex}
+\input{preamble/commands.tex}
+
+% glossary
+%\usepackage[
+%nonumberlist,
+%toc
+%]{glossaries}
+%\usepackage[acronym,symbols]{glossaries}
+%\usepackage{glossaries}
+%\makenoidxglossaries
+%\input{content/glossary.tex} did not use glossary in this work
+
+\begin{document}
+
+% title page
+\input{preamble/titlepage.tex}
+
+\pagenumbering{Roman}
+
+% ToC etc.
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+%\input{content/acronyms}
+%\clearpage
+
+\setcounter{savedpage}{\value{page}}
+
+\pagenumbering{arabic}
+
+
+% --- LOAD SECTIONS ---
+%\input{content/01_brainstorming}
+\input{content/01_introduction}
+\input{content/02_basics}
+\input{content/03_main_topic}
+\input{content/04_summary}
+\input{content/05_appendix}
+
+\clearpage
+
+\pagenumbering{Roman}
+\setcounter{page}{\value{savedpage}}
+
+% --- LIST OF REFERENCES ---
+\renewcommand*{\UrlFont}{\rmfamily}
+\printbibliography
+
+% Glossar
+%\newpage
+%\printnoidxglossaries
+
+\end{document}

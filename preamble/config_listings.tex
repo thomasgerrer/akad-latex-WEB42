@@ -1,0 +1,131 @@
+\usepackage{listings}
+\usepackage[dvipsnames]{xcolor}
+
+
+% Default style for all listings. Among other things, fixes 
+\lstset{
+	% --- Linenos ---
+	numbersep=3pt,                  % how far the line-numbers are from the code
+	numberstyle=\tiny\color{gray},
+	numbers=left,                   % where to put the line-numbers
+	stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+	% -- Basics --
+	basicstyle=\ttfamily,
+	sensitive=true,  % Case-sensitive keywords
+	tabsize=4,
+	breaklines=true,  % Break lines if too long
+	%escapechar=`,
+	%escapeinside={<@}{@>},
+	% I don't know what keepspaces and columns do, but together, they fix the ugly default listings style.
+	columns=fullflexible,
+	keepspaces,
+	showstringspaces=false,  % Spaces not shown as _
+	basicstyle=\ttfamily\footnotesize,
+}
+
+% Usage: \begin{lstlisting}[language=notepadpp-xml] ...
+\lstdefinelanguage{XML}{
+	morestring=[b]",                       % "attribute strings"
+	morecomment=[s]{!--}{--},            % <!-- comments -->
+	morecomment=[s]{?}{?},               % <? xml instructions ?>
+	morekeywords={id}, % tag names (customize)
+	keywordstyle=\color{YellowGreen},      % element/tag names
+	identifierstyle=\color{NavyBlue},  % attribute names
+	stringstyle=\color{Fuchsia},    % attribute values
+	commentstyle=\color{ForestGreen},  % XML comments
+	moredelim=[s][\color{black}]{>}{<},
+	showstringspaces=false,
+	breaklines=true
+}
+
+% Usage: \begin{lstlisting}[language=notepadpp-xml] ...
+\lstdefinelanguage{racketSQL}{
+%	language=SQL,
+%	morestring=[b]",                   % "attribute strings"
+	morecomment=[s]{;;}{;;},           % <;; comments ;;>
+	morekeywords={ABSOLUTE,ACTION,ADD,ALLOCATE,ALTER,ARE,AS,ASSERTION,%
+		AT,BEGIN,BETWEEN,BIT_LENGTH,BOTH,BY,CASCADE,CASCADED,CASE,CAST,%
+		CATALOG,CHAR_LENGTH,CHARACTER_LENGTH,CLUSTER,COALESCE,%
+		COLLATE,COLLATION,COLUMN,CONNECT,CONNECTION,CONSTRAINT,%
+		CONSTRAINTS,CONVERT,CORRESPONDING,CREATE,CROSS,CURRENT_DATE,%
+		CURRENT_TIME,CURRENT_TIMESTAMP,CURRENT_USER,DAY,DEALLOCATE,%
+		DEC,DEFERRABLE,DEFERED,DESCRIBE,DESCRIPTOR,DIAGNOSTICS,%
+		DISCONNECT,DOMAIN,DROP,ELSE,END,EXEC,EXCEPT,EXCEPTION,EXECUTE,%
+		EXTERNAL,EXTRACT,FALSE,FIRST,FOREIGN,FROM,FULL,GET,GLOBAL,%
+		GRAPHIC,HAVING,HOUR,IDENTITY,IMMEDIATE,INDEX,INITIALLY,INNER,%
+		INPUT,INSENSITIVE,INSERT,INTO,INTERSECT,INTERVAL,%
+		ISOLATION,JOIN,KEY,LAST,LEADING,LEFT,LEVEL,LIMIT,LOCAL,LOWER,%
+		MATCH,MINUTE,MONTH,NAMES,NATIONAL,NATURAL,NCHAR,NEXT,NO,NOT,NULL,%
+		NULLIF,OCTET_LENGTH,ON,ONLY,ORDER,ORDERED,OUTER,OUTPUT,OVERLAPS,%
+		PAD,PARTIAL,POSITION,PREPARE,PRESERVE,PRIMARY,PRIOR,READ,%
+		RELATIVE,RESTRICT,REVOKE,RIGHT,ROWS,SCROLL,SECOND,SELECT,SESSION,%
+		SESSION_USER,SIZE,SPACE,SQLSTATE,SUBSTRING,SYSTEM_USER,%
+		TABLE,TEMPORARY,THEN,TIMEZONE_HOUR,%
+		TIMEZONE_MINUTE,TRAILING,TRANSACTION,TRANSLATE,TRANSLATION,TRIM,%
+		TRUE,UNIQUE,UNKNOWN,UPPER,USAGE,USING,VALUE,VALUES,%
+		VARGRAPHIC,VARYING,WHEN,WHERE,WRITE,YEAR,ZONE,%
+		AND,ASC,avg,CHECK,COMMIT,count,DECODE,DESC,DISTINCT,GROUP,IN,% FF
+		LIKE,NUMBER,ROLLBACK,SUBSTR,sum,VARCHAR2,% FF
+		MIN,MAX,UNION,UPDATE,% RF
+		ALL,ANY,CUBE,CUBE,DEFAULT,DELETE,EXISTS,GRANT,OR,RECURSIVE,% DJ
+		ROLE,ROLLUP,SET,SOME,TRIGGER,VIEW},% DJ,
+	keywordstyle=\bfseries,      % element/tag names
+%	identifierstyle=\color{NavyBlue},  % attribute names
+	stringstyle=\color{Fuchsia},    % attribute values
+	commentstyle=\color{ForestGreen},  % XML comments
+%	moredelim=[s][\color{black}]{>}{<},
+%	showstringspaces=false,
+	breaklines=true
+	}
+
+% Usage: \begin{lstlisting}[language=racket] ...
+\lstdefinelanguage{racket} {
+	% -- Comments --
+	%morecomment=[l]{//},
+	%morecomment=[s]{/*}{*/},
+	morecomment=[l]{;},         % Inline comments start with ;
+	morecomment=[s]{\#|}{|\#},  % Block comments are done with #|  |#
+	commentstyle={\color{ForestGreen}\slshape\sffamily},
+	% -- Strings --
+	morestring=[b]",
+	stringstyle=\color{red},
+	% --- Literal replacements ---
+	literate=%
+	%	{lambda}{{$\lambda$}}1
+		{->}{{$\rightarrow$}}1
+		{*}{{$\times$}}1,
+	% -- Keywords (I got these from a vague French website; Racket seems to have no lstlisting style defined anywhere) --
+	classoffset=1,
+		morekeywords={
+			define, define-syntax, define-macro, define-datatype, lambda, define-stream, stream-lambda
+		},
+		keywordstyle=\color{purple},
+	classoffset=2,
+		morekeywords={
+			begin, call-with-current-continuation, call/cc, call-with-input-file, call-with-output-file, 
+			cases, cond, do, else, for-each, if,
+			let*, let, let-syntax, letrec, letrec-syntax,
+			define-context, define-controller, Integer, Boolean, get, when-required, when-provided,
+			maybe_publish, require, submod, or/c, ->, \#\%module-begin, always_publish, with-syntax, define-struct/contract, syntax-case, define/contract,
+			let-values, let*-values,
+			module, provide,
+			and, or, not, 
+			delay, force,
+			\#`, \#',
+			null, cons, car, cdr, cadr, caddr,
+			\#lang, implement, begin-for-syntax, rename-out,
+			quasiquote, quote, unquote, unquote-splicing,
+			map, filter, foldl, syntax, syntax-rules, eval, environment, query 
+		},
+		keywordstyle=\color{blue},
+	classoffset=3,
+		morekeywords={import, export},
+		keywordstyle=\color{green},
+	classoffset=0,
+	alsoletter={',`,-,/,>,<,\#,\%},
+	moredelim=**[is][\color{lightgray}]{<<@<<}{>>@>>},
+	moredelim=**[is][\itshape\color{OliveGreen}]{<<;<<}{>>;>>},
+}
+
+% Inline racket
+\newcommand{\ir}[1]{\lstinline[basicstyle=\ttfamily\small,language=racket]{#1}}
